@@ -1,0 +1,46 @@
+# Local environment / secrets
+.env
+.env.*
+.python-version
+.venv/
+venv/
+env/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local app data / generated DBs
+*.db
+*.sqlite3
+chat_history.db
+chat_historyDB/
+
+# Scratch / experimental files
+agent_with_memory*.py
+
+# Packaging / build artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Test and coverage artifacts
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
