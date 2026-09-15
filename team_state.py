@@ -6,28 +6,19 @@ from dotenv import load_dotenv
 from agno.run import RunContext
 import os 
 
-
 load_dotenv()
-
 
 api_key=os.getenv("GROQ_API_KEY","").strip()
 
-
 llm=Groq(id="openai/gpt-oss-20b",api_key=api_key)
-
 
 db=SqliteDb(db_file="test_db/demo.db",session_table="session_table")
 
-
-
 def add_items(run_context:RunContext,list_name:str,item_name:str)->str:
     """Add item to the specified list"""
-
     item_name=item_name.lower().strip()
     list_name=list_name.lower().strip()
-
     valid_lists=["groceries_list","todo_list","study_list"]
-
     if list_name not in valid_lists:
         return f"Invalid list name: {list_name}"
 
@@ -35,19 +26,14 @@ def add_items(run_context:RunContext,list_name:str,item_name:str)->str:
         run_context.session_state[list_name]=[]
 
     run_context.session_state[list_name].append(item_name)
-
     return f"the item {item_name} added to the {list_name}"
-
 
 
 def remove_items(run_context:RunContext,list_name:str,item_name:str)->str:
     """remove only the specified item from the specified list"""
-
     item_name=item_name.lower().strip()
     list_name=list_name.lower().strip()
-
     valid_lists=["groceries_list","todo_list","study_list"]
-
     if list_name not in valid_lists:
         return f"Invalid list name: {list_name}"
 
@@ -58,18 +44,13 @@ def remove_items(run_context:RunContext,list_name:str,item_name:str)->str:
         return f"the item {item_name} is not present in the list {list_name}"
 
     run_context.session_state[list_name].remove(item_name)
-
     return f"the item {item_name} removed from the list {list_name}"
-
 
 
 def list_items(run_context:RunContext,list_name:str)->str:
     """list item in the specified list"""
-
     list_name=list_name.lower().strip()
-
     valid_lists=["groceries_list","todo_list","study_list"]
-
     if list_name not in valid_lists:
         return f"Invalid list name: {list_name}"
 
@@ -78,20 +59,14 @@ def list_items(run_context:RunContext,list_name:str)->str:
 
     if not run_context.session_state[list_name]:
         return f"the {list_name} is currently empty"
-
     text="\n".join([f"-{item}" for item in run_context.session_state[list_name]])
-
     return f"the item in the {list_name} are\n{text}"
-
 
 
 def clear_list(run_context:RunContext,list_name:str)->str:
     """clear the specified list of all the items"""
-
     list_name=list_name.lower().strip()
-
     valid_lists=["groceries_list","todo_list","study_list"]
-
     if list_name not in valid_lists:
         return f"Invalid list name: {list_name}"
 
@@ -99,14 +74,11 @@ def clear_list(run_context:RunContext,list_name:str)->str:
         run_context.session_state[list_name]=[]
 
     run_context.session_state[list_name].clear()
-
     return f"list {list_name} cleared of all the item"
-
 
 
 def list_all_items(run_context:RunContext)->str:
     """list all items from all the personal lists"""
-
     groceries_list=run_context.session_state.get("groceries_list",[])
     todo_list=run_context.session_state.get("todo_list",[])
     study_list=run_context.session_state.get("study_list",[])
@@ -114,27 +86,18 @@ def list_all_items(run_context:RunContext)->str:
     groceries_text="\n".join([f"-{item}" for item in groceries_list])
     todo_text="\n".join([f"-{item}" for item in todo_list])
     study_text="\n".join([f"-{item}" for item in study_list])
-
     if not groceries_text:
         groceries_text="-Empty"
-
     if not todo_text:
         todo_text="-Empty"
-
     if not study_text:
         study_text="-Empty"
-
     return f"""
-Groceries List:
-{groceries_text}
+           Groceries List:{groceries_text}
 
-Todo List:
-{todo_text}
+           Todo List:{todo_text}
 
-Study List:
-{study_text}
-"""
-
+           Study List:{study_text} """
 
 
 grocery_agent=Agent(
@@ -155,7 +118,6 @@ grocery_agent=Agent(
 )
 
 
-
 todo_list_agent=Agent(
     id="todo_agent",
     name="todo list Agent",
@@ -172,7 +134,6 @@ todo_list_agent=Agent(
     tools=[add_items,remove_items,list_items,clear_list],
     add_session_state_to_context=True
 )
-
 
 
 study_list_agent=Agent(
@@ -193,10 +154,8 @@ study_list_agent=Agent(
 )
 
 
-
 list_manager = Team(
     name="personal list manager",
-
     members=[
         grocery_agent,
         todo_list_agent,
@@ -292,7 +251,6 @@ list_manager = Team(
         "User: 'List all my lists' -> Team list_all_items tool -> show all three lists.",
         "User: 'Clear my grocery list' -> groceries_list -> Grocery Agent -> clear list."
     ],
-
     model=llm,
     db=db,
     tools=[list_all_items],
@@ -307,7 +265,6 @@ list_manager = Team(
         "study_list":[]
     }
 )
-
 
 
 list_manager.cli_app(stream=True,markdown=True)
