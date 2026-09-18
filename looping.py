@@ -11,12 +11,12 @@ api_key=os.getenv("GROQ_API_KEY","").strip()
 llm=Groq(id="openai/gpt-oss-20b",api_key=api_key)
 
 def word_count_condition(step_output:list[StepOutput])->bool:
-    "Condition to check if the story is less than 300 words"
+    "Condition to check if the story is less than 150 words"
     if step_output:
         for output in step_output:
             story_content:str =output.content
             word_count:int =len(story_content.split(" "))
-            if word_count<=300:
+            if word_count<=150:
                 return True
             else:
                 return False
@@ -42,7 +42,7 @@ looping_step=Loop(
     steps=[story_generation_step],
     name="Story generation loop",
     description="generates story in loop untill the given condition are met",
-    end_condition=word_count_condition
+    end_condition=word_count_condition,
 )
 
 worflow=Workflow(
@@ -52,4 +52,4 @@ worflow=Workflow(
     description="A workflow that generates a short stories while ensuring the length of story should not exceeds the max-limit using looping mechanism"
 )
 
-worflow.print_response(input="title: father!!",stream=True,markdown=True)
+worflow.print_response(input="title: a little girl!! in 100 words",stream=True,markdown=True)
